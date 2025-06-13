@@ -4,8 +4,9 @@ import json
 import sqlite3
 from datetime import datetime
 from zoneinfo import ZoneInfo
-
 from guess_validator import validate_guess
+from grid_generator import generate_grid
+
 
 app = Flask(__name__)
 CORS(app)
@@ -51,6 +52,16 @@ def list_queens():
     names = [row[0] for row in cur.fetchall()]
     conn.close()
     return jsonify(names)
+
+
+# Generate grid
+@app.route("/generate", methods=["GET"])
+def generate_today_grid():
+    result = generate_grid()
+    if result:
+        return jsonify({"status": "✅ Grid generated!"})
+    else:
+        return jsonify({"status": "❌ Failed to generate grid"}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)
