@@ -2,7 +2,7 @@ import sqlite3
 import json
 from datetime import datetime
 from zoneinfo import ZoneInfo
-
+import os
 # Get today in Toronto timezone
 toronto_today = datetime.now(ZoneInfo("America/Toronto")).date().isoformat()
 
