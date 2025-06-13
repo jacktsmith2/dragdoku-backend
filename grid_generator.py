@@ -1,4 +1,4 @@
-# Updated grid generator with category and label protection (Toronto timezone)
+# Updated grid generator with refined category control
 
 import sqlite3
 import random
@@ -20,10 +20,16 @@ def has_duplicate_labels(criteria_list):
     labels = [c["label"] for c in criteria_list]
     return len(labels) != len(set(labels))
 
-# Check for duplicate categories
+# Check for duplicate categories (within same axis)
 def has_duplicate_categories(criteria_list):
     categories = [c.get("category") for c in criteria_list if "category" in c]
     return len(categories) != len(set(categories))
+
+# Check for overlap of 'at_least' categories across row and col
+def has_forbidden_category_overlap(rows, cols):
+    def at_least_cats(clist):
+        return {c["category"] for c in clist if c.get("category", "").startswith("at_least")}
+    return bool(at_least_cats(rows) & at_least_cats(cols))
 
 # Step 1: Try to generate a grid with 3x3 criteria combinations
 def generate_grid():
@@ -32,11 +38,15 @@ def generate_grid():
         rows = random.sample(CRITERIA, 3)
         cols = random.sample(CRITERIA, 3)
 
-        combined = rows + cols
-        if has_duplicate_labels(combined) or has_duplicate_categories(combined):
+        if (
+            has_duplicate_labels(rows + cols)
+            or has_duplicate_categories(rows)
+            or has_duplicate_categories(cols)
+            or has_forbidden_category_overlap(rows, cols)
+        ):
             continue
 
-        matches = []  # 3x3 grid of sets of queen_ids
+        matches = []
         for r in rows:
             row_matches = []
             for c in cols:
