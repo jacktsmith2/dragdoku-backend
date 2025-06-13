@@ -1,17 +1,20 @@
 from flask import Flask, request, jsonify
 import json
 import sqlite3
-import datetime
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from guess_validator import validate_guess
 
 app = Flask(__name__)
 
-# Serve today's grid
+# Serve today's grid based on Toronto time
 @app.route("/grid", methods=["GET"])
 def get_grid():
-    today = datetime.date.today().isoformat()
+    toronto_now = datetime.now(ZoneInfo("America/Toronto"))
+    today = toronto_now.date().isoformat()
     filename = f"grid_{today}.json"
+
     try:
         with open(filename, "r", encoding="utf-8") as f:
             data = json.load(f)
