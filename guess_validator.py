@@ -3,35 +3,45 @@ import json
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-# Load today's grid based on Toronto time
+# Get today in Toronto timezone
 toronto_today = datetime.now(ZoneInfo("America/Toronto")).date().isoformat()
-with open(f"grid_{toronto_today}.json", "r", encoding="utf-8") as f:
-    grid = json.load(f)
+
+# Fetch today’s grid from the database
+conn = sqlite3.connect("dragdoku.db")
+cur = conn.cursor()
+cur.execute("SELECT row_sql, col_sql FROM grids WHERE date = ?", (toronto_today,))
+row = cur.fetchone()
+conn.close()
+
+if row:
+    row_sql_list = json.loads(row[0])
+    col_sql_list = json.loads(row[1])
+else:
+    row_sql_list = []
+    col_sql_list = []
 
 def validate_guess(row_idx, col_idx, queen_name):
-    row_sql = grid["row_sql"][row_idx]
-    col_sql = grid["col_sql"][col_idx]
+    if row_idx >= len(row_sql_list) or col_idx >= len(col_sql_list):
+        return False, "❌ Grid not loaded or invalid index.", None
+
+    row_sql = row_sql_list[row_idx]
+    col_sql = col_sql_list[col_idx]
 
     conn = sqlite3.connect("dragdoku.db")
     cur = conn.cursor()
 
-    # First, check if this queen is a valid match for the given cell
     query = f"""
         SELECT image
         FROM queens
         WHERE lower(queen_name) = ?
-          AND ({row_sql}) AND ({col_sql})
+        AND ({row_sql}) AND ({col_sql})
     """
     cur.execute(query, (queen_name.lower(),))
     match = cur.fetchone()
+    conn.close()
 
     if match:
         image_url = match[0]
-        conn.close()
         return True, "✅ Correct!", image_url
     else:
-        # Try to still get the image even if the guess is incorrect
-        cur.execute("SELECT image FROM queens WHERE lower(queen_name) = ?", (queen_name.lower(),))
-        fallback = cur.fetchone()
-        conn.close()
-        return False, "❌ Not a valid match for this cell.", fallback[0] if fallback else None
+        return False, "❌ Not a valid match for this cell.", None
