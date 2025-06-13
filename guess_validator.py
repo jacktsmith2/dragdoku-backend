@@ -1,10 +1,11 @@
 import sqlite3
 import json
-import datetime
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
-# Use today's grid
-today = datetime.date.today().isoformat()
-with open(f"grid_{today}.json", "r", encoding="utf-8") as f:
+# Use today's grid based on Toronto local time
+toronto_today = datetime.now(ZoneInfo("America/Toronto")).date().isoformat()
+with open(f"grid_{toronto_today}.json", "r", encoding="utf-8") as f:
     grid = json.load(f)
 
 def validate_guess(row_idx, col_idx, queen_name):
