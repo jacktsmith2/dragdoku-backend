@@ -1,4 +1,4 @@
-# Updated grid generator with unique solution assignment logic and Toronto-based file saving
+# Updated grid generator with category and label protection (Toronto timezone)
 
 import sqlite3
 import random
@@ -15,12 +15,26 @@ def fetch_queens(sql):
     cur.execute(f"SELECT DISTINCT queen_id FROM queens WHERE {sql}")
     return set(row[0] for row in cur.fetchall())
 
+# Check for duplicate labels
+def has_duplicate_labels(criteria_list):
+    labels = [c["label"] for c in criteria_list]
+    return len(labels) != len(set(labels))
+
+# Check for duplicate categories
+def has_duplicate_categories(criteria_list):
+    categories = [c.get("category") for c in criteria_list if "category" in c]
+    return len(categories) != len(set(categories))
+
 # Step 1: Try to generate a grid with 3x3 criteria combinations
 def generate_grid():
     max_attempts = 500
     for _ in range(max_attempts):
         rows = random.sample(CRITERIA, 3)
         cols = random.sample(CRITERIA, 3)
+
+        combined = rows + cols
+        if has_duplicate_labels(combined) or has_duplicate_categories(combined):
+            continue
 
         matches = []  # 3x3 grid of sets of queen_ids
         for r in rows:
