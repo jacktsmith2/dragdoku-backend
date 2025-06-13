@@ -2,12 +2,14 @@ import sqlite3
 import json
 from datetime import datetime
 from zoneinfo import ZoneInfo
-from os
+import os
+
 # Get today in Toronto timezone
 toronto_today = datetime.now(ZoneInfo("America/Toronto")).date().isoformat()
 
 # Fetch today’s grid from the database
 DB_PATH = os.path.join(os.path.dirname(__file__), "dragdoku.db")
+conn = sqlite3.connect(DB_PATH)
 cur = conn.cursor()
 cur.execute("SELECT row_sql, col_sql FROM grids WHERE date = ?", (toronto_today,))
 row = cur.fetchone()
@@ -27,7 +29,7 @@ def validate_guess(row_idx, col_idx, queen_name):
     row_sql = row_sql_list[row_idx]
     col_sql = col_sql_list[col_idx]
 
-    conn = sqlite3.connect("dragdoku.db")
+    conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
 
     query = f"""
