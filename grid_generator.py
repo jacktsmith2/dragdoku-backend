@@ -37,8 +37,9 @@ def has_conflicting_numeric_overlap(rows, cols):
     for r in rows:
         for c in cols:
             if r.get("category") == c.get("category"):
-                if "min" in r and "min" in c and range_overlap(r, c):
-                    return True
+                if "min" in r and "max" in r and "min" in c and "max" in c:
+                    if range_overlap(r, c):
+                        return True
     return False
 
 # Step 1: Try to generate a grid with 3x3 criteria combinations
