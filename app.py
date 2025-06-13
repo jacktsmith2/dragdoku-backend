@@ -10,7 +10,7 @@ from grid_generator import generate_grid
 app = Flask(name)
 CORS(app)
 
-✅ Serve today's grid from the database (not file)
+#✅ Serve today's grid from the database (not file)
 
 @app.route("/grid", methods=["GET"])
 def get_grid():
@@ -36,7 +36,7 @@ if result:
 else:  
     return jsonify({"error": "Grid for today not found"}), 404
 
-✅ Validate a guess and return result + optional image
+#✅ Validate a guess and return result + optional image
 
 @app.route("/validate", methods=["POST"])
 def validate():
@@ -56,7 +56,7 @@ return jsonify({
     "image": image_url  
 })
 
-✅ Get list of queens
+#✅ Get list of queens
 
 @app.route("/queens", methods=["GET"])
 def list_queens():
@@ -67,7 +67,7 @@ names = [row[0] for row in cur.fetchall()]
 conn.close()
 return jsonify(names)
 
-✅ Generate today's grid manually
+#✅ Generate today's grid manually
 
 @app.route("/generate", methods=["GET"])
 def generate_today_grid():
