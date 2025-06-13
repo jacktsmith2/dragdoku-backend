@@ -10,7 +10,7 @@ import os
 DB_PATH = os.path.join(os.path.dirname(__file__), "dragdoku.db")
 conn = sqlite3.connect(DB_PATH)
 cur = conn.cursor()
-
+print("🔍 DB absolute path:", os.path.abspath("dragdoku.db"))
 # Helper: get queen_ids matching a SQL WHERE clause
 def fetch_queens(sql):
     cur.execute(f"SELECT DISTINCT queen_id FROM queens WHERE {sql}")
