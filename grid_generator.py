@@ -1,9 +1,10 @@
-# Updated grid generator with unique solution assignment logic and date-based file saving
+# Updated grid generator with unique solution assignment logic and Toronto-based file saving
 
 import sqlite3
 import random
 import json
-from datetime import date
+from datetime import datetime
+from zoneinfo import ZoneInfo
 from criteria import CRITERIA
 
 conn = sqlite3.connect("dragdoku.db")
@@ -14,7 +15,7 @@ def fetch_queens(sql):
     cur.execute(f"SELECT DISTINCT queen_id FROM queens WHERE {sql}")
     return set(row[0] for row in cur.fetchall())
 
-# Step 1: try to generate a grid with 3x3 criteria combinations
+# Step 1: Try to generate a grid with 3x3 criteria combinations
 def generate_grid():
     max_attempts = 500
     for _ in range(max_attempts):
@@ -41,7 +42,7 @@ def generate_grid():
 
     return None
 
-# Step 2: assign one unique queen_id to each of the 9 cells
+# Step 2: Assign one unique queen_id to each of the 9 cells
 def assign_unique_queens(matches):
     assigned = [[None for _ in range(3)] for _ in range(3)]
     used = set()
@@ -64,9 +65,12 @@ def assign_unique_queens(matches):
         return assigned
     return None
 
-# Step 3: Save result to a date-named file
+# Step 3: Save result to a date-named file using Toronto time
 result = generate_grid()
 if result:
+    toronto_today = datetime.now(ZoneInfo("America/Toronto")).date().isoformat()
+    filename = f"grid_{toronto_today}.json"
+
     output = {
         "rows": [r["label"] for r in result["rows"]],
         "cols": [c["label"] for c in result["cols"]],
@@ -76,9 +80,6 @@ if result:
         "col_desc": [c["description"] for c in result["cols"]],
         "answers": result["assignment"]
     }
-
-    today_str = date.today().isoformat()  # e.g. 2025-06-13
-    filename = f"grid_{today_str}.json"
 
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(output, f, indent=2)
