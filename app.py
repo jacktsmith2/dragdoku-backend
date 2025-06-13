@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS  # ✅ NEW import
 import json
 import sqlite3
 from datetime import datetime
@@ -8,7 +7,6 @@ from zoneinfo import ZoneInfo
 from guess_validator import validate_guess
 
 app = Flask(__name__)
-CORS(app)  # ✅ Allow cross-origin requests from any origin
 
 # Serve today's grid based on Toronto time
 @app.route("/grid", methods=["GET"])
@@ -24,7 +22,7 @@ def get_grid():
     except FileNotFoundError:
         return jsonify({"error": "Today's grid not found."}), 404
 
-# Validate a guess
+# Validate a guess and return result + optional image
 @app.route("/validate", methods=["POST"])
 def validate():
     data = request.json
@@ -35,11 +33,12 @@ def validate():
     if row is None or col is None or not queen:
         return jsonify({"error": "Missing data"}), 400
 
-    is_valid, message, _ = validate_guess(row, col, queen)
+    is_valid, message, image_url = validate_guess(row, col, queen)
     return jsonify({
         "valid": is_valid,
         "message": message,
-        "queen": queen
+        "queen": queen,
+        "image": image_url  # New field!
     })
 
 # Get list of queens
