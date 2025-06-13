@@ -3,7 +3,7 @@ import json
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-# Use today's grid based on Toronto local time
+# Load today's grid based on Toronto time
 toronto_today = datetime.now(ZoneInfo("America/Toronto")).date().isoformat()
 with open(f"grid_{toronto_today}.json", "r", encoding="utf-8") as f:
     grid = json.load(f)
@@ -15,17 +15,23 @@ def validate_guess(row_idx, col_idx, queen_name):
     conn = sqlite3.connect("dragdoku.db")
     cur = conn.cursor()
 
+    # First, check if this queen is a valid match for the given cell
     query = f"""
-        SELECT queen_id
+        SELECT image
         FROM queens
         WHERE lower(queen_name) = ?
-        AND ({row_sql}) AND ({col_sql})
+          AND ({row_sql}) AND ({col_sql})
     """
     cur.execute(query, (queen_name.lower(),))
     match = cur.fetchone()
-    conn.close()
 
     if match:
-        return True, "✅ Correct!", queen_name
+        image_url = match[0]
+        conn.close()
+        return True, "✅ Correct!", image_url
     else:
-        return False, "❌ Not a valid match for this cell.", None
+        # Try to still get the image even if the guess is incorrect
+        cur.execute("SELECT image FROM queens WHERE lower(queen_name) = ?", (queen_name.lower(),))
+        fallback = cur.fetchone()
+        conn.close()
+        return False, "❌ Not a valid match for this cell.", fallback[0] if fallback else None
