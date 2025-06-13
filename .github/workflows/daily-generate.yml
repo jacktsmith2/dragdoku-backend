@@ -1,3 +1,14 @@
-git add .github/workflows/daily-generate.yml
-git commit -m "Add daily grid generator workflow"
-git push
+name: Daily Grid Generator
+
+on:
+  schedule:
+    - cron: "0 5 * * *"  # 5am UTC = Midnight Toronto time
+  workflow_dispatch:      # allows manual triggering from GitHub
+
+jobs:
+  trigger-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send GET request to /generate
+        run: |
+          curl -X GET https://dragdoku-backend.onrender.com/generate
