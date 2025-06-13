@@ -107,6 +107,7 @@ def save_grid_to_db(rows, cols, assignment):
     ))
 
     conn.commit()
+    print("🔍 DB absolute path:", os.path.abspath(DB_PATH))
     print("✅ Grid for", today, "committed to database")
 
 # Call if running directly
