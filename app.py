@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS  # ✅ NEW import
 import json
 import sqlite3
 from datetime import datetime
@@ -7,6 +8,7 @@ from zoneinfo import ZoneInfo
 from guess_validator import validate_guess
 
 app = Flask(__name__)
+CORS(app)  # ✅ Allow cross-origin requests from any origin
 
 # Serve today's grid based on Toronto time
 @app.route("/grid", methods=["GET"])
@@ -49,6 +51,6 @@ def list_queens():
     names = [row[0] for row in cur.fetchall()]
     conn.close()
     return jsonify(names)
-    
+
 if __name__ == "__main__":
     app.run(debug=True)
