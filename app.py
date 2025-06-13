@@ -3,7 +3,7 @@ import json
 import sqlite3
 import datetime
 
-from validate_guess import validate_guess
+from guess_validator import validate_guess
 
 app = Flask(__name__)
 
