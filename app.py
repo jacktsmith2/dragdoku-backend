@@ -1,0 +1,41 @@
+from flask import Flask, request, jsonify
+import json
+import sqlite3
+import datetime
+
+from validate_guess import validate_guess
+
+app = Flask(__name__)
+
+# Serve today's grid
+@app.route("/grid", methods=["GET"])
+def get_grid():
+    today = datetime.date.today().isoformat()
+    filename = f"grid_{today}.json"
+    try:
+        with open(filename, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        return jsonify(data)
+    except FileNotFoundError:
+        return jsonify({"error": "Today's grid not found."}), 404
+
+# Validate a guess
+@app.route("/validate", methods=["POST"])
+def validate():
+    data = request.json
+    row = data.get("row")
+    col = data.get("col")
+    queen = data.get("queen")
+
+    if row is None or col is None or not queen:
+        return jsonify({"error": "Missing data"}), 400
+
+    is_valid, message, _ = validate_guess(row, col, queen)
+    return jsonify({
+        "valid": is_valid,
+        "message": message,
+        "queen": queen
+    })
+
+if __name__ == "__main__":
+    app.run(debug=True)
