@@ -12,4 +12,4 @@ def run_grid():
         return jsonify({"status": "❌ Grid generation failed."}), 500
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
