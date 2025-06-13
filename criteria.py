@@ -98,7 +98,7 @@ CRITERIA = [
 {
     "label": "Season 17",
     "description": "Queen appeared in Season 17 (any franchise).",
-    "sql": "queen_id IN (SELECT queen_id FROM queens WHERE season_no = 16)",
+    "sql": "queen_id IN (SELECT queen_id FROM queens WHERE season_no = 17)",
     "category": "season"
 },
 {
