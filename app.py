@@ -40,5 +40,15 @@ def validate():
         "queen": queen
     })
 
+# Get list of queens
+@app.route("/queens", methods=["GET"])
+def list_queens():
+    conn = sqlite3.connect("dragdoku.db")
+    cur = conn.cursor()
+    cur.execute("SELECT DISTINCT queen_name FROM queens ORDER BY queen_name ASC")
+    names = [row[0] for row in cur.fetchall()]
+    conn.close()
+    return jsonify(names)
+    
 if __name__ == "__main__":
     app.run(debug=True)
