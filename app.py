@@ -6,11 +6,19 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from guess_validator import validate_guess
 from grid_generator import generate_grid
+import unicodedata
 
 app = Flask(__name__)
 CORS(app)
 
-# ✅ Serve today's grid from the database (not file)
+# ✅ Normalize accents
+def normalize(text):
+    return ''.join(
+        c for c in unicodedata.normalize('NFD', text)
+        if unicodedata.category(c) != 'Mn'
+    ).lower()
+
+# ✅ Serve today's grid from the database
 @app.route("/grid", methods=["GET"])
 def get_grid():
     toronto_today = datetime.now(ZoneInfo("America/Toronto")).date().isoformat()
@@ -35,7 +43,7 @@ def get_grid():
     else:
         return jsonify({"error": "Grid for today not found"}), 404
 
-# ✅ Validate a guess and return result + optional image
+# ✅ Validate a guess
 @app.route("/validate", methods=["POST"])
 def validate():
     data = request.json
@@ -54,17 +62,35 @@ def validate():
         "image": image_url
     })
 
-# ✅ Get list of queens
+# ✅ Return queen names with fuzzy & exclusion support
 @app.route("/queens", methods=["GET"])
 def list_queens():
+    search = request.args.get("search", "").lower()
+    exclude = request.args.getlist("exclude")  # can be passed multiple times
+
     conn = sqlite3.connect("dragdoku.db")
     cur = conn.cursor()
-    cur.execute("SELECT DISTINCT queen_name FROM queens ORDER BY queen_name ASC")
-    names = [row[0] for row in cur.fetchall()]
+    cur.execute("SELECT DISTINCT queen_name FROM queens")
+    all_names = [row[0] for row in cur.fetchall()]
     conn.close()
-    return jsonify(names)
 
-# ✅ Generate today's grid manually
+    # Normalize exclude list
+    exclude_norm = set(normalize(q) for q in exclude)
+
+    # Apply fuzzy filtering
+    if search:
+        search_norm = normalize(search)
+        matches = [
+            name for name in all_names
+            if search_norm in normalize(name) and normalize(name) not in exclude_norm
+        ]
+    else:
+        matches = [name for name in all_names if normalize(name) not in exclude_norm]
+
+    matches.sort()
+    return jsonify(matches)
+
+# ✅ Manual trigger for today's grid
 @app.route("/generate", methods=["GET"])
 def generate_today_grid():
     result = generate_grid()
