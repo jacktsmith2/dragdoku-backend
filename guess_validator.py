@@ -7,7 +7,7 @@ from zoneinfo import ZoneInfo
 toronto_today = datetime.now(ZoneInfo("America/Toronto")).date().isoformat()
 
 # DB path (static)
-DB_PATH = "dragdoku.db"
+DB_PATH = os.path.join(os.path.dirname(__file__), "dragdoku.db")
 
 # Fetch today's grid SQL logic from the database
 conn = sqlite3.connect(DB_PATH)
