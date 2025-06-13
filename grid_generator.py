@@ -86,8 +86,12 @@ def assign_unique_queens(matches):
 
 # Step 3: Save the grid into the database
 def save_grid_to_db(rows, cols, assignment):
+    print("🧪 save_grid_to_db called")
+
     today = datetime.now(ZoneInfo("America/Toronto")).date().isoformat()
     cur.execute("DELETE FROM grids WHERE date = ?", (today,))
+    print("🧽 Old grid deleted (if existed)")
+
     cur.execute("""
         INSERT INTO grids (date, rows, cols, row_sql, col_sql, row_desc, col_desc, answers)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -101,8 +105,9 @@ def save_grid_to_db(rows, cols, assignment):
         json.dumps([c["description"] for c in cols]),
         json.dumps(assignment)
     ))
+
     conn.commit()
-    print(f"✅ Grid for {today} saved to database")
+    print("✅ Grid for", today, "committed to database")
 
 # Call if running directly
 if __name__ == "__main__":
