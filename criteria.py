@@ -166,7 +166,7 @@ CRITERIA = [
     "description": "Queen has at least two maxi challenge wins.",
     "sql": "queen_id IN (SELECT queen_id FROM queens GROUP BY queen_id HAVING SUM(win) >= 2)",
     "category" : "maxi_wins",
-    "max" : 2
+    "max" : 2,
     "min" : 999
 },
 {
