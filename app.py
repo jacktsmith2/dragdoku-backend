@@ -7,7 +7,7 @@ from zoneinfo import ZoneInfo
 from guess_validator import validate_guess
 
 app = Flask(__name__)
-
+CORS(app)
 # Serve today's grid based on Toronto time
 @app.route("/grid", methods=["GET"])
 def get_grid():
