@@ -6,8 +6,9 @@ import json
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from criteria import CRITERIA
-
-conn = sqlite3.connect("dragdoku.db")
+import os
+DB_PATH = os.path.join(os.path.dirname(__file__), "dragdoku.db")
+conn = sqlite3.connect(DB_PATH)
 cur = conn.cursor()
 
 # Helper: get queen_ids matching a SQL WHERE clause
