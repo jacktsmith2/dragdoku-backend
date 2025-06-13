@@ -117,108 +117,144 @@ CRITERIA = [
     "label": "No Maxi Wins",
     "description": "Queen has zero maxi challenge wins.",
     "sql": "queen_id IN (SELECT queen_id FROM queens GROUP BY queen_id HAVING SUM(win) = 0)",
-    "category" : "maxi_wins"
+    "category" : "maxi_wins",
+    "max" : 0,
+    "min" : 0
 },
 {
     "label": "1 Maxi Win",
     "description": "Queen has one maxi challenge win.",
     "sql": "queen_id IN (SELECT queen_id FROM queens GROUP BY queen_id HAVING SUM(win) = 1)",
-    "category" : "maxi_wins"
+    "category" : "maxi_wins",
+    "max" : 1,
+    "min" : 1
 },
 {
     "label": "2 Maxi Wins",
     "description": "Queen has two maxi challenge wins.",
     "sql": "queen_id IN (SELECT queen_id FROM queens GROUP BY queen_id HAVING SUM(win) = 2)",
-    "category" : "maxi_wins"
+    "category" : "maxi_wins",
+    "max" : 2,
+    "min" : 2
 },
 {
     "label": "3 Maxi Wins",
     "description": "Queen has three maxi challenge wins.",
     "sql": "queen_id IN (SELECT queen_id FROM queens GROUP BY queen_id HAVING SUM(win) = 3)",
-    "category" : "maxi_wins"
+    "category" : "maxi_wins",
+    "max" : 3,
+    "min" : 3
 },
 {
     "label": "4 Maxi Wins",
     "description": "Queen has four maxi challenge wins.",
     "sql": "queen_id IN (SELECT queen_id FROM queens GROUP BY queen_id HAVING SUM(win) = 4)",
-    "category" : "maxi_wins"
+    "category" : "maxi_wins",
+    "max" : 4,
+    "min" : 4
 },
 {
     "label": "1+ Maxi Win",
     "description": "Queen has at least one maxi challenge win.",
     "sql": "queen_id IN (SELECT queen_id FROM queens GROUP BY queen_id HAVING SUM(win) > 0)",
-    "category" : "at_least_maxi_wins"
+    "category" : "maxi_wins",
+    "max" : 1,
+    "min" : 999
 },
 {
     "label": "2+ Maxi Wins",
     "description": "Queen has at least two maxi challenge wins.",
     "sql": "queen_id IN (SELECT queen_id FROM queens GROUP BY queen_id HAVING SUM(win) >= 2)",
-    "category" : "at_least_maxi_wins"
+    "category" : "maxi_wins",
+    "max" : 2
+    "min" : 999
 },
 {
     "label": "3+ Maxi Wins",
     "description": "Queen has at least three maxi challenge wins.",
     "sql": "queen_id IN (SELECT queen_id FROM queens GROUP BY queen_id HAVING SUM(win) >= 3)",
-    "category" : "at_least_maxi_wins"
+    "category" : "maxi_wins",
+    "max" : 3,
+    "min" : 999
 },
 {
     "label": "4+ Maxi Wins",
     "description": "Queen has at least four maxi challenge wins.",
     "sql": "queen_id IN (SELECT queen_id FROM queens GROUP BY queen_id HAVING SUM(win) >= 4)",
-    "category" : "at_least_maxi_wins"
+    "category" : "maxi_wins",
+    "max" : 4,
+    "min" : 999
 },
 {
     "label": "No Lip Sync Wins",
     "description": "Queen has zero lip sync wins.",
     "sql": "queen_id IN (SELECT queen_id FROM queens GROUP BY queen_id HAVING SUM(lip_sync_wins) = 0)",
-    "category" : "lipsync_wins"
+    "category" : "lipsync_wins",
+    "max" : 0,
+    "min" : 0
 },
 {
     "label": "1 Lip Sync Win",
     "description": "Queen has one lip sync win.",
     "sql": "queen_id IN (SELECT queen_id FROM queens GROUP BY queen_id HAVING SUM(lip_sync_wins) = 1)",
-    "category" : "lipsync_wins"
+    "category" : "lipsync_wins",
+    "max" : 1,
+    "min" : 1
 },
 {
     "label": "2 Lip Sync Wins",
     "description": "Queen has two lip sync wins.",
     "sql": "queen_id IN (SELECT queen_id FROM queens GROUP BY queen_id HAVING SUM(lip_sync_wins) = 2)",
-    "category" : "lipsync_wins"
+    "category" : "lipsync_wins",
+    "max" : 2,
+    "min" : 2
 },
 {
     "label": "3 Lip Sync Wins",
     "description": "Queen has three lip sync wins.",
     "sql": "queen_id IN (SELECT queen_id FROM queens GROUP BY queen_id HAVING SUM(lip_sync_wins) = 3)",
-    "category" : "lipsync_wins"
+    "category" : "lipsync_wins",
+    "max" : 3,
+    "min" : 3
 },
 {
     "label": "4 Lip Sync Wins",
     "description": "Queen has four lip sync wins.",
     "sql": "queen_id IN (SELECT queen_id FROM queens GROUP BY queen_id HAVING SUM(lip_sync_wins) = 4)",
-    "category" : "lipsync_wins"
+    "category" : "lipsync_wins",
+    "max" : 4,
+    "min" : 4
 },
 {
     "label": "1+ Lip Sync Win",
     "description": "Queen has at least one lip sync win.",
     "sql": "queen_id IN (SELECT queen_id FROM queens GROUP BY queen_id HAVING SUM(lip_sync_wins) >= 1)",
-    "category" : "at_least_lipsync_wins"
+    "category" : "lipsync_wins",
+    "max" : 1,
+    "min" : 999
 },
 {
     "label": "2+ Lip Sync Wins",
     "description": "Queen has at least two lip sync wins.",
     "sql": "queen_id IN (SELECT queen_id FROM queens GROUP BY queen_id HAVING SUM(lip_sync_wins) >= 2)",
-    "category" : "at_least_lipsync_wins"
+    "category" : "lipsync_wins",
+    "max" : 2,
+    "min" : 999
 },
 {
     "label": "3+ Lip Sync Wins",
     "description": "Queen has at least three lip sync wins.",
     "sql": "queen_id IN (SELECT queen_id FROM queens GROUP BY queen_id HAVING SUM(lip_sync_wins) >= 3)",
-    "category" : "at_least_lipsync_wins"
+    "category" : "lipsync_wins",
+    "max" : 3,
+    "min" : 999
 },
 {
     "label": "4+ Lip Sync Wins",
     "description": "Queen has at least four lip sync wins.",
     "sql": "queen_id IN (SELECT queen_id FROM queens GROUP BY queen_id HAVING SUM(lip_sync_wins) >= 4)",
-    "category" : "at_least_lipsync_wins"
+    "category" : "lipsync_wins",
+    "max" : 4,
+    "min" : 999
 }
 ]
