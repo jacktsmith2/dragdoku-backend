@@ -7,24 +7,41 @@ from zoneinfo import ZoneInfo
 from guess_validator import validate_guess
 from grid_generator import generate_grid
 
-
 app = Flask(__name__)
 CORS(app)
-# Serve today's grid based on Toronto time
+
+# ✅ Serve today's grid from the database (not file)
 @app.route("/grid", methods=["GET"])
 def get_grid():
-    toronto_now = datetime.now(ZoneInfo("America/Toronto"))
-    today = toronto_now.date().isoformat()
-    filename = f"grid_{today}.json"
+    toronto_today = datetime.now(ZoneInfo("America/Toronto")).date().isoformat()
+    conn = sqlite3.connect("dragdoku.db")
+    cur = conn.cursor()
 
-    try:
-        with open(filename, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        return jsonify(data)
-    except FileNotFoundError:
-        return jsonify({"error": "Today's grid not found."}), 404
+    cur.execute("SELECT rows, cols, row_sql, col_sql, row_desc, col_desc, answers FROM grids WHERE date = ?", (toronto_today,))
+    result = cur.fetchone()
 
-# Validate a guess and return result + optional image
+    if result:
+        rows, cols, row_sql, col_sql, row_desc, col_desc, answers = map(json.loads, result)
+        conn.close()
+        return jsonify({
+            "rows": rows,
+            "cols": cols,
+            "row_sql": row_sql,
+            "col_sql": col_sql,
+            "row_desc": row_desc,
+            "col_desc": col_desc,
+            "answers": answers
+        })
+    else:
+        # Generate grid, save to DB inside generate_grid()
+        grid_data = generate_grid()
+        conn.close()
+        if grid_data:
+            return jsonify(grid_data)
+        else:
+            return jsonify({"error": "Failed to generate grid"}), 500
+
+# ✅ Validate a guess and return result + optional image
 @app.route("/validate", methods=["POST"])
 def validate():
     data = request.json
@@ -40,10 +57,10 @@ def validate():
         "valid": is_valid,
         "message": message,
         "queen": queen,
-        "image": image_url  # New field!
+        "image": image_url
     })
 
-# Get list of queens
+# ✅ Get list of queens
 @app.route("/queens", methods=["GET"])
 def list_queens():
     conn = sqlite3.connect("dragdoku.db")
@@ -53,8 +70,7 @@ def list_queens():
     conn.close()
     return jsonify(names)
 
-
-# Generate grid
+# ✅ Generate today's grid manually
 @app.route("/generate", methods=["GET"])
 def generate_today_grid():
     result = generate_grid()
