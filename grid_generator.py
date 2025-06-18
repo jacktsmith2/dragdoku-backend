@@ -6,10 +6,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from criteria import CRITERIA
 
-# Connect once for save_grid_to_db()
 DATABASE_URL = os.environ["DATABASE_URL"]
-conn_global = psycopg2.connect(DATABASE_URL)
-cur = conn_global.cursor()
 
 # Helper: get queen_ids matching a SQL WHERE clause
 def fetch_queens(sql, conn):
@@ -104,3 +101,32 @@ def assign_unique_queens(matches):
 
     if backtrack(0, 0):
         return assigned
+    return None
+
+# Step 3: Save the grid into the PostgreSQL database
+def save_grid_to_db(rows, cols, assignment):
+    print("🧪 save_grid_to_db called")
+    today = datetime.now(ZoneInfo("America/Toronto")).date().isoformat()
+
+    with psycopg2.connect(DATABASE_URL) as conn:
+        cur = conn.cursor()
+
+        cur.execute("DELETE FROM grids WHERE date = %s", (today,))
+        print("🧽 Old grid deleted (if existed)")
+
+        cur.execute("""
+            INSERT INTO grids (date, rows, cols, row_sql, col_sql, row_desc, col_desc, answers)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        """, (
+            today,
+            json.dumps([r["label"] for r in rows]),
+            json.dumps([c["label"] for c in cols]),
+            json.dumps([r["sql"] for r in rows]),
+            json.dumps([c["sql"] for c in cols]),
+            json.dumps([r["description"] for r in rows]),
+            json.dumps([c["description"] for c in cols]),
+            json.dumps(assignment)
+        ))
+
+        conn.commit()
+        print("✅ Grid for", today, "committed to PostgreSQL")
