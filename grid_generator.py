@@ -7,10 +7,12 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from criteria import CRITERIA
 import os
+
 DB_PATH = os.path.join(os.path.dirname(__file__), "dragdoku.db")
 conn = sqlite3.connect(DB_PATH)
 cur = conn.cursor()
 print("🔍 DB absolute path:", os.path.abspath("dragdoku.db"))
+
 # Helper: get queen_ids matching a SQL WHERE clause
 def fetch_queens(sql):
     cur.execute(f"SELECT DISTINCT queen_id FROM queens WHERE {sql}")
@@ -21,11 +23,24 @@ def has_duplicate_labels(criteria_list):
     labels = [c["label"] for c in criteria_list]
     return len(labels) != len(set(labels))
 
-# Check for forbidden category overlaps between rows and columns
+# Check for forbidden 'at_least' category overlaps between row and col axes
 def has_illegal_axis_overlap(rows, cols):
     row_categories = {r["category"] for r in rows if r.get("category", "").startswith("at_least")}
     col_categories = {c["category"] for c in cols if c.get("category", "").startswith("at_least")}
     return bool(row_categories & col_categories)
+
+# New: Detect conflicting numeric ranges like "1 Maxi Win" x "1+ Maxi Win"
+def range_overlap(a, b):
+    return not (a["max"] < b["min"] or b["max"] < a["min"])
+
+def has_conflicting_numeric_overlap(rows, cols):
+    for r in rows:
+        for c in cols:
+            if r.get("category") == c.get("category"):
+                if "min" in r and "max" in r and "min" in c and "max" in c:
+                    if range_overlap(r, c):
+                        return True
+    return False
 
 # Step 1: Try to generate a grid with 3x3 criteria combinations
 def generate_grid():
@@ -33,11 +48,13 @@ def generate_grid():
     for _ in range(max_attempts):
         rows = random.sample(CRITERIA, 3)
         cols = random.sample(CRITERIA, 3)
-
         combined = rows + cols
+
         if has_duplicate_labels(combined):
             continue
         if has_illegal_axis_overlap(rows, cols):
+            continue
+        if has_conflicting_numeric_overlap(rows, cols):
             continue
 
         matches = []  # 3x3 grid of sets of queen_ids
