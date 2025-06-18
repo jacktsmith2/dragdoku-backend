@@ -1,17 +1,15 @@
-# Updated grid generator with database storage and Toronto timezone logic
-
-import sqlite3
+import os
 import random
 import json
+import psycopg2
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from criteria import CRITERIA
-import os
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "dragdoku.db")
-conn = sqlite3.connect(DB_PATH)
+# Connect to Supabase PostgreSQL
+DATABASE_URL = os.environ["DATABASE_URL"]
+conn = psycopg2.connect(DATABASE_URL)
 cur = conn.cursor()
-print("🔍 DB absolute path:", os.path.abspath("dragdoku.db"))
 
 # Helper: get queen_ids matching a SQL WHERE clause
 def fetch_queens(sql):
@@ -29,7 +27,7 @@ def has_illegal_axis_overlap(rows, cols):
     col_categories = {c["category"] for c in cols if c.get("category", "").startswith("at_least")}
     return bool(row_categories & col_categories)
 
-# New: Detect conflicting numeric ranges like "1 Maxi Win" x "1+ Maxi Win"
+# Detect conflicting numeric ranges like "1 Maxi Win" x "1+ Maxi Win"
 def range_overlap(a, b):
     return not (a["max"] < b["min"] or b["max"] < a["min"])
 
@@ -57,7 +55,7 @@ def generate_grid():
         if has_conflicting_numeric_overlap(rows, cols):
             continue
 
-        matches = []  # 3x3 grid of sets of queen_ids
+        matches = []
         for r in rows:
             row_matches = []
             for c in cols:
@@ -101,17 +99,17 @@ def assign_unique_queens(matches):
         return assigned
     return None
 
-# Step 3: Save the grid into the database
+# Step 3: Save the grid into the PostgreSQL database
 def save_grid_to_db(rows, cols, assignment):
     print("🧪 save_grid_to_db called")
-
     today = datetime.now(ZoneInfo("America/Toronto")).date().isoformat()
-    cur.execute("DELETE FROM grids WHERE date = ?", (today,))
+
+    cur.execute("DELETE FROM grids WHERE date = %s", (today,))
     print("🧽 Old grid deleted (if existed)")
 
     cur.execute("""
         INSERT INTO grids (date, rows, cols, row_sql, col_sql, row_desc, col_desc, answers)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
     """, (
         today,
         json.dumps([r["label"] for r in rows]),
@@ -124,10 +122,9 @@ def save_grid_to_db(rows, cols, assignment):
     ))
 
     conn.commit()
-    print("🔍 DB absolute path:", os.path.abspath(DB_PATH))
-    print("✅ Grid for", today, "committed to database")
+    print("✅ Grid for", today, "committed to PostgreSQL")
 
-# Call if running directly
+# Run the generator directly
 if __name__ == "__main__":
     result = generate_grid()
     if result:
