@@ -3,6 +3,8 @@ import json
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from criteria import CRITERIA
+import sqlite3, os
+
 
 import os
 from supabase import create_client
