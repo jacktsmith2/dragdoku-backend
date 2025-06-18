@@ -12,23 +12,16 @@ SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# Helper: get queen_ids matching a SQL WHERE clause in Supabase Postgres
-def fetch_queens(sql):
-    # Example query to queens table with filter in `sql`
-    # NOTE: This assumes your queens table has 'queen_id' and that 'sql' is valid SQL filter
-    # Supabase uses PostgREST, so we need to convert 'sql' into filter params or use RPC function.
-    # For simplicity, assume 'sql' is a safe WHERE clause string, so we run RPC (or raw SQL) via supabase.
-    
-    # Unfortunately supabase-py doesn't directly support raw SQL.
-    # So you need to create a Postgres function that accepts SQL filter string
-    # OR you rewrite your criteria in a way supabase-py supports filtering.
+DB_PATH = os.path.join(os.path.dirname(__file__), "dragdoku.db")
+conn = sqlite3.connect(DB_PATH)
+cur = conn.cursor()
+print("🔍 DB absolute path:", os.path.abspath("dragdoku.db"))
 
-    # Here is a simplified placeholder: fetch all queen_ids (replace with your logic)
-    response = supabase.table("queens").select("queen_id").execute()
-    if response.error:
-        print("❌ Supabase fetch queens error:", response.error)
-        return set()
-    return set(row["queen_id"] for row in response.data)
+# Helper: get queen_ids matching a SQL WHERE clause
+def fetch_queens(sql):
+    cur.execute(f"SELECT DISTINCT queen_id FROM queens WHERE {sql}")
+    return set(row[0] for row in cur.fetchall())
+
 
 # Check duplicate labels, overlaps, same as before...
 
