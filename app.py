@@ -1,7 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import json
-import sqlite3
+import psycopg2
+import os
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from guess_validator import validate_guess
@@ -10,32 +11,43 @@ from grid_generator import generate_grid
 app = Flask(__name__)
 CORS(app)
 
-# ✅ Serve today's grid from the database (not file)
+DATABASE_URL = os.environ["DATABASE_URL"]
+
+# ✅ Serve today's grid from the PostgreSQL database
 @app.route("/grid", methods=["GET"])
 def get_grid():
     toronto_today = datetime.now(ZoneInfo("America/Toronto")).date().isoformat()
-    conn = sqlite3.connect("dragdoku.db")
-    cur = conn.cursor()
 
-    cur.execute("SELECT rows, cols, row_sql, col_sql, row_desc, col_desc, answers FROM grids WHERE date = ?", (toronto_today,))
-    result = cur.fetchone()
-    conn.close()
+    try:
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
 
-    if result:
-        rows, cols, row_sql, col_sql, row_desc, col_desc, answers = map(json.loads, result)
-        return jsonify({
-            "rows": rows,
-            "cols": cols,
-            "row_sql": row_sql,
-            "col_sql": col_sql,
-            "row_desc": row_desc,
-            "col_desc": col_desc,
-            "answers": answers
-        })
-    else:
-        return jsonify({"error": "Grid for today not found"}), 404
+        cur.execute("""
+            SELECT rows, cols, row_sql, col_sql, row_desc, col_desc, answers
+            FROM grids
+            WHERE date = %s
+        """, (toronto_today,))
+        result = cur.fetchone()
+        conn.close()
 
-# ✅ Validate a guess and return result + optional image
+        if result:
+            rows, cols, row_sql, col_sql, row_desc, col_desc, answers = map(json.loads, result)
+            return jsonify({
+                "rows": rows,
+                "cols": cols,
+                "row_sql": row_sql,
+                "col_sql": col_sql,
+                "row_desc": row_desc,
+                "col_desc": col_desc,
+                "answers": answers
+            })
+        else:
+            return jsonify({"error": "Grid for today not found"}), 404
+
+    except Exception as e:
+        return jsonify({"error": f"Database error: {str(e)}"}), 500
+
+# ✅ Validate a guess via external function
 @app.route("/validate", methods=["POST"])
 def validate():
     data = request.json
@@ -54,17 +66,20 @@ def validate():
         "image": image_url
     })
 
-# ✅ Get list of queens
+# ✅ Return a sorted list of queen names
 @app.route("/queens", methods=["GET"])
 def list_queens():
-    conn = sqlite3.connect("dragdoku.db")
-    cur = conn.cursor()
-    cur.execute("SELECT DISTINCT queen_name FROM queens ORDER BY queen_name ASC")
-    names = [row[0] for row in cur.fetchall()]
-    conn.close()
-    return jsonify(names)
+    try:
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        cur.execute("SELECT DISTINCT queen_name FROM queens ORDER BY queen_name ASC")
+        names = [row[0] for row in cur.fetchall()]
+        conn.close()
+        return jsonify(names)
+    except Exception as e:
+        return jsonify({"error": f"Database error: {str(e)}"}), 500
 
-# ✅ Generate today's grid manually
+# ✅ Manually trigger grid generation
 @app.route("/generate", methods=["GET"])
 def generate_today_grid():
     result = generate_grid()
