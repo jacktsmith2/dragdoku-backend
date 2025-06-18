@@ -1,19 +1,21 @@
-import sqlite3
+import psycopg2
 import json
 from datetime import datetime
 from zoneinfo import ZoneInfo
 import os
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "dragdoku.db")
+DATABASE_URL = os.environ["DATABASE_URL"]
 
 def validate_guess(row_idx, col_idx, queen_name):
     try:
         toronto_today = datetime.now(ZoneInfo("America/Toronto")).date().isoformat()
 
-        # Load today's grid criteria
-        conn = sqlite3.connect(DB_PATH)
+        # Connect to database
+        conn = psycopg2.connect(DATABASE_URL)
         cur = conn.cursor()
-        cur.execute("SELECT row_sql, col_sql FROM grids WHERE date = ?", (toronto_today,))
+
+        # Fetch today's grid
+        cur.execute("SELECT row_sql, col_sql FROM grids WHERE date = %s", (toronto_today,))
         row = cur.fetchone()
         conn.close()
 
@@ -29,18 +31,17 @@ def validate_guess(row_idx, col_idx, queen_name):
         row_sql = row_sql_list[row_idx]
         col_sql = col_sql_list[col_idx]
 
-        # Run validation
         print(f"🧪 VALIDATING: {queen_name.lower()}")
         print(f"    Row SQL: {row_sql}")
         print(f"    Col SQL: {col_sql}")
-        print(f"    DB Path: {DB_PATH}")
 
-        conn = sqlite3.connect(DB_PATH)
+        # Run validation
+        conn = psycopg2.connect(DATABASE_URL)
         cur = conn.cursor()
         query = f"""
             SELECT image
             FROM queens
-            WHERE lower(queen_name) = ?
+            WHERE lower(queen_name) = %s
             AND ({row_sql}) AND ({col_sql})
         """
         cur.execute(query, (queen_name.lower(),))
