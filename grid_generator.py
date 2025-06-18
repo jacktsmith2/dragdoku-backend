@@ -103,11 +103,16 @@ def assign_unique_queens(matches):
 
 # Step 3: Save the grid into the database
 def save_grid_to_db(rows, cols, assignment):
-    print("🧪 save_grid_to_db called")
+    import sqlite3, json, os
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+    
+    DB_PATH = os.path.join(os.path.dirname(__file__), "dragdoku.db")
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
 
     today = datetime.now(ZoneInfo("America/Toronto")).date().isoformat()
     cur.execute("DELETE FROM grids WHERE date = ?", (today,))
-    print("🧽 Old grid deleted (if existed)")
 
     cur.execute("""
         INSERT INTO grids (date, rows, cols, row_sql, col_sql, row_desc, col_desc, answers)
@@ -124,8 +129,8 @@ def save_grid_to_db(rows, cols, assignment):
     ))
 
     conn.commit()
-    print("🔍 DB absolute path:", os.path.abspath(DB_PATH))
-    print("✅ Grid for", today, "committed to database")
+    conn.close()
+    print("✅ Grid saved for", today)
 
 # Call if running directly
 if __name__ == "__main__":
