@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import json
 import sqlite3
+import requests
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from guess_validator import validate_guess
@@ -10,19 +11,25 @@ from grid_generator import generate_grid
 app = Flask(__name__)
 CORS(app)
 
-# ✅ Serve today's grid from the database (not file)
+# Supabase settings
+SUPABASE_URL = "https://ubnphrvwjzucdawtbmws.supabase.co"
+SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVibnBocnZ3anp1Y2Rhd3RibXdzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAyNzgxOTYsImV4cCI6MjA2NTg1NDE5Nn0.StVlYNhc95G7LPzeKzHprnTwY6R7DQ2sxJs8GdQryyA"
+
+# ✅ Serve today's grid from local DB or Supabase or generate new
 @app.route("/grid", methods=["GET"])
 def get_grid():
     toronto_today = datetime.now(ZoneInfo("America/Toronto")).date().isoformat()
+    filename = f"grid_{toronto_today}.json"
+
+    # 1. Try local database
     conn = sqlite3.connect("dragdoku.db")
     cur = conn.cursor()
-
     cur.execute("SELECT rows, cols, row_sql, col_sql, row_desc, col_desc, answers FROM grids WHERE date = ?", (toronto_today,))
     result = cur.fetchone()
+    conn.close()
 
     if result:
         rows, cols, row_sql, col_sql, row_desc, col_desc, answers = map(json.loads, result)
-        conn.close()
         return jsonify({
             "rows": rows,
             "cols": cols,
@@ -32,16 +39,34 @@ def get_grid():
             "col_desc": col_desc,
             "answers": answers
         })
-    else:
-        # Generate grid, save to DB inside generate_grid()
-        grid_data = generate_grid()
-        conn.close()
-        if grid_data:
-            return jsonify(grid_data)
-        else:
-            return jsonify({"error": "Failed to generate grid"}), 500
 
-# ✅ Validate a guess and return result + optional image
+    # 2. Try Supabase
+    res = requests.get(
+        f"{SUPABASE_URL}/storage/v1/object/public/grids/{filename}",
+        headers={"apikey": SUPABASE_KEY}
+    )
+    if res.status_code == 200:
+        return jsonify(res.json())
+
+    # 3. Fallback: generate and upload to Supabase
+    grid_data = generate_grid()
+    if grid_data:
+        upload_grid_to_supabase(grid_data, filename)
+        return jsonify(grid_data)
+    else:
+        return jsonify({"error": "Failed to generate grid"}), 500
+
+def upload_grid_to_supabase(data, filename):
+    url = f"{SUPABASE_URL}/storage/v1/object/grids/{filename}"
+    headers = {
+        "apikey": SUPABASE_KEY,
+        "Authorization": f"Bearer {SUPABASE_KEY}",
+        "Content-Type": "application/json"
+    }
+    res = requests.put(url, headers=headers, data=json.dumps(data))
+    print("📦 Uploaded to Supabase:", res.status_code)
+
+# ✅ Validate a guess
 @app.route("/validate", methods=["POST"])
 def validate():
     data = request.json
@@ -60,7 +85,7 @@ def validate():
         "image": image_url
     })
 
-# ✅ Get list of queens
+# ✅ Get all queens
 @app.route("/queens", methods=["GET"])
 def list_queens():
     conn = sqlite3.connect("dragdoku.db")
@@ -70,12 +95,15 @@ def list_queens():
     conn.close()
     return jsonify(names)
 
-# ✅ Generate today's grid manually
+# ✅ Manually trigger grid generation
 @app.route("/generate", methods=["GET"])
 def generate_today_grid():
     result = generate_grid()
     if result:
-        return jsonify({"status": "✅ Grid generated!"})
+        date = datetime.now(ZoneInfo("America/Toronto")).date().isoformat()
+        filename = f"grid_{date}.json"
+        upload_grid_to_supabase(result, filename)
+        return jsonify({"status": "✅ Grid generated and uploaded!"})
     else:
         return jsonify({"status": "❌ Failed to generate grid"}), 500
 
