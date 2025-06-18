@@ -19,10 +19,10 @@ def get_grid():
 
     cur.execute("SELECT rows, cols, row_sql, col_sql, row_desc, col_desc, answers FROM grids WHERE date = ?", (toronto_today,))
     result = cur.fetchone()
-    conn.close()
 
     if result:
         rows, cols, row_sql, col_sql, row_desc, col_desc, answers = map(json.loads, result)
+        conn.close()
         return jsonify({
             "rows": rows,
             "cols": cols,
@@ -33,7 +33,13 @@ def get_grid():
             "answers": answers
         })
     else:
-        return jsonify({"error": "Grid for today not found"}), 404
+        # Generate grid, save to DB inside generate_grid()
+        grid_data = generate_grid()
+        conn.close()
+        if grid_data:
+            return jsonify(grid_data)
+        else:
+            return jsonify({"error": "Failed to generate grid"}), 500
 
 # ✅ Validate a guess and return result + optional image
 @app.route("/validate", methods=["POST"])
