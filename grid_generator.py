@@ -14,14 +14,27 @@ cur = conn.cursor()
 # Helper: get queen_ids matching a SQL WHERE clause
 def fetch_queens(sql):
     try:
+        conn = psycopg2.connect(DATABASE_URL)
         cur = conn.cursor()
+        print(f"Running SQL: SELECT DISTINCT queen_id FROM queens WHERE {sql}")
         cur.execute(f"SELECT DISTINCT queen_id FROM queens WHERE {sql}")
-        results = cur.fetchall()
-        return [r[0] for r in results]
+        rows = cur.fetchall()
+        return [r[0] for r in rows]
     except Exception as e:
-        print("SQL error:", e)
-        conn.rollback()
-        return []
+        print(f"SQL error: {e}")
+        # Don't rollback if connection is already closed
+        try:
+            if conn and conn.closed == 0:
+                conn.rollback()
+        except Exception as rollback_err:
+            print(f"Rollback failed: {rollback_err}")
+        raise
+    finally:
+        try:
+            if conn and conn.closed == 0:
+                conn.close()
+        except Exception:
+            pass
 
 # Check for duplicate labels
 def has_duplicate_labels(criteria_list):
