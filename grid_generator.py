@@ -13,8 +13,15 @@ cur = conn.cursor()
 
 # Helper: get queen_ids matching a SQL WHERE clause
 def fetch_queens(sql):
-    cur.execute(f"SELECT DISTINCT queen_id FROM queens WHERE {sql}")
-    return set(row[0] for row in cur.fetchall())
+    try:
+        cur = conn.cursor()
+        cur.execute(f"SELECT DISTINCT queen_id FROM queens WHERE {sql}")
+        results = cur.fetchall()
+        return [r[0] for r in results]
+    except Exception as e:
+        print("SQL error:", e)
+        conn.rollback()
+        return []
 
 # Check for duplicate labels
 def has_duplicate_labels(criteria_list):
