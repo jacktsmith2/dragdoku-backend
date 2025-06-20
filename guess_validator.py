@@ -5,23 +5,25 @@ from zoneinfo import ZoneInfo
 import os
 
 DB_PATH = os.path.join(os.path.dirname(__file__), "dragdoku.db")
+PUZZLE_DIR = os.path.join(os.path.dirname(__file__), "puzzles")
+
+def load_grid_criteria_from_file(date_str):
+    path = os.path.join(PUZZLE_DIR, f"{date_str}.json")
+    if not os.path.exists(path):
+        return None, None
+    with open(path, "r") as f:
+        grid = json.load(f)
+    row_sql = grid.get("row_sql")
+    col_sql = grid.get("col_sql")
+    return row_sql, col_sql
 
 def validate_guess(row_idx, col_idx, queen_name):
     try:
         toronto_today = datetime.now(ZoneInfo("America/Toronto")).date().isoformat()
 
-        # Load today's grid criteria
-        conn = sqlite3.connect(DB_PATH)
-        cur = conn.cursor()
-        cur.execute("SELECT row_sql, col_sql FROM grids WHERE date = ?", (toronto_today,))
-        row = cur.fetchone()
-        conn.close()
-
-        if not row:
+        row_sql_list, col_sql_list = load_grid_criteria_from_file(toronto_today)
+        if not row_sql_list or not col_sql_list:
             return False, "❌ No grid found for today.", None
-
-        row_sql_list = json.loads(row[0])
-        col_sql_list = json.loads(row[1])
 
         if row_idx >= len(row_sql_list) or col_idx >= len(col_sql_list):
             return False, "❌ Invalid row or column index.", None
@@ -29,12 +31,7 @@ def validate_guess(row_idx, col_idx, queen_name):
         row_sql = row_sql_list[row_idx]
         col_sql = col_sql_list[col_idx]
 
-        # Run validation
-        print(f"🧪 VALIDATING: {queen_name.lower()}")
-        print(f"    Row SQL: {row_sql}")
-        print(f"    Col SQL: {col_sql}")
-        print(f"    DB Path: {DB_PATH}")
-
+        # Run validation query on queens DB
         conn = sqlite3.connect(DB_PATH)
         cur = conn.cursor()
         query = f"""
