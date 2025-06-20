@@ -118,12 +118,16 @@ def generate_grid():
         if all(len(cell) >= 2 for row in matches for cell in row):
             assignment = assign_unique_queens(matches)
             if assignment:
+                today = datetime.now(ZoneInfo("America/Toronto")).date().isoformat()
                 grid_data = {
                     "rows": [r["label"] for r in rows],
                     "cols": [c["label"] for c in cols],
+                    "row_sql": [r["sql"] for r in rows],       # <-- Add this
+                    "col_sql": [c["sql"] for c in cols],       # <-- Add this
+                    "row_desc": [r["description"] for r in rows], # Optional but useful
+                    "col_desc": [c["description"] for c in cols], # Optional but useful
                     "answers": assignment
                 }
-                today = datetime.now(ZoneInfo("America/Toronto")).date().isoformat()
                 push_puzzle_to_github(grid_data, today)
                 return grid_data
     print("❌ Failed to generate valid grid")
