@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import json
-import sqlite3
+import os
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from guess_validator import validate_guess
@@ -10,38 +10,38 @@ from grid_generator import generate_grid
 app = Flask(__name__)
 CORS(app)
 
-# ✅ Serve today's grid from the database (not file)
+PUZZLE_DIR = os.path.join(os.path.dirname(__file__), "puzzles")
+
+def load_puzzle_from_file(date_str):
+    path = os.path.join(PUZZLE_DIR, f"{date_str}.json")
+    if os.path.exists(path):
+        with open(path, "r") as f:
+            return json.load(f)
+    return None
+
+def save_puzzle_to_file(date_str, grid_data):
+    os.makedirs(PUZZLE_DIR, exist_ok=True)
+    path = os.path.join(PUZZLE_DIR, f"{date_str}.json")
+    with open(path, "w") as f:
+        json.dump(grid_data, f, indent=2)
+
 @app.route("/grid", methods=["GET"])
 def get_grid():
-    toronto_today = datetime.now(ZoneInfo("America/Toronto")).date().isoformat()
-    conn = sqlite3.connect("dragdoku.db")
-    cur = conn.cursor()
+    today = datetime.now(ZoneInfo("America/Toronto")).date().isoformat()
+    
+    # 1) Try load puzzle JSON from local file
+    grid = load_puzzle_from_file(today)
+    if grid:
+        return jsonify(grid)
+    
+    # 2) If no local file, generate new grid (which also pushes to GitHub)
+    grid = generate_grid()
+    if grid:
+        save_puzzle_to_file(today, grid)
+        return jsonify(grid)
+    
+    return jsonify({"error": "Failed to generate grid"}), 500
 
-    cur.execute("SELECT rows, cols, row_sql, col_sql, row_desc, col_desc, answers FROM grids WHERE date = ?", (toronto_today,))
-    result = cur.fetchone()
-
-    if result:
-        rows, cols, row_sql, col_sql, row_desc, col_desc, answers = map(json.loads, result)
-        conn.close()
-        return jsonify({
-            "rows": rows,
-            "cols": cols,
-            "row_sql": row_sql,
-            "col_sql": col_sql,
-            "row_desc": row_desc,
-            "col_desc": col_desc,
-            "answers": answers
-        })
-    else:
-        # Generate grid, save to DB inside generate_grid()
-        grid_data = generate_grid()
-        conn.close()
-        if grid_data:
-            return jsonify(grid_data)
-        else:
-            return jsonify({"error": "Failed to generate grid"}), 500
-
-# ✅ Validate a guess and return result + optional image
 @app.route("/validate", methods=["POST"])
 def validate():
     data = request.json
@@ -60,9 +60,9 @@ def validate():
         "image": image_url
     })
 
-# ✅ Get list of queens
 @app.route("/queens", methods=["GET"])
 def list_queens():
+    import sqlite3
     conn = sqlite3.connect("dragdoku.db")
     cur = conn.cursor()
     cur.execute("SELECT DISTINCT queen_name FROM queens ORDER BY queen_name ASC")
@@ -70,11 +70,12 @@ def list_queens():
     conn.close()
     return jsonify(names)
 
-# ✅ Generate today's grid manually
 @app.route("/generate", methods=["GET"])
 def generate_today_grid():
-    result = generate_grid()
-    if result:
+    grid = generate_grid()
+    if grid:
+        today = datetime.now(ZoneInfo("America/Toronto")).date().isoformat()
+        save_puzzle_to_file(today, grid)
         return jsonify({"status": "✅ Grid generated!"})
     else:
         return jsonify({"status": "❌ Failed to generate grid"}), 500
