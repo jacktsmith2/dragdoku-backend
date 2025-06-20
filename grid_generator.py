@@ -2,6 +2,7 @@ import random
 import json
 import os
 import requests
+import sqlite3
 import base64
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -13,9 +14,16 @@ GITHUB_REPO = "dragdoku-backend"
 GITHUB_BRANCH = "main"
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN") 
 
+
+DB_PATH = "dragdoku.db"  # adjust if needed
+
 def fetch_queens(sql):
-    # Your existing queen fetch logic here
-    return set()
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
+    cur.execute(f"SELECT DISTINCT queen_id FROM queens WHERE {sql}")
+    rows = cur.fetchall()
+    conn.close()
+    return set(row[0] for row in rows)
 
 def has_duplicate_labels(criteria_list):
     labels = [c["label"] for c in criteria_list]
