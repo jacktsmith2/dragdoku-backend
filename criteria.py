@@ -114,74 +114,74 @@ CRITERIA = [
     "category" : "appearances"
 },
 {
-    "label": "No Mini Wins",
+    "label": "No Maxi Wins",
     "description": "Queen has zero mini challenge wins.",
     "sql": "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) = 0)",
-    "category" : "mini_wins",
+    "category" : "maxi_wins",
     "min" : 0,
     "max" : 0
 },
 {
-    "label": "1 Mini Win",
+    "label": "1 Maxi Win",
     "description": "Queen has one mini challenge win.",
     "sql": "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) = 1)",
-    "category" : "mini_wins",
+    "category" : "maxi_wins",
     "min" : 1,
     "max" : 1
 },
 {
-    "label": "2 Mini Wins",
+    "label": "2 Maxi Wins",
     "description": "Queen has two mini challenge wins.",
     "sql": "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) = 2)",
-    "category" : "mini_wins",
+    "category" : "maxi_wins",
     "min" : 2,
     "max" : 2
 },
 {
-    "label": "3 Mini Wins",
+    "label": "3 Maxi Wins",
     "description": "Queen has three mini challenge wins.",
     "sql": "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) = 3)",
-    "category" : "mini_wins",
+    "category" : "maxi_wins",
     "min" : 3,
     "max" : 3
 },
 {
-    "label": "4 Mini Wins",
+    "label": "4 Maxi Wins",
     "description": "Queen has four mini challenge wins.",
     "sql": "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) = 4)",
-    "category" : "mini_wins",
+    "category" : "maxi_wins",
     "min" : 4,
     "max" : 4
 },
 {
-    "label": "1+ Mini Win",
+    "label": "1+ Maxi Win",
     "description": "Queen has at least one mini challenge win.",
     "sql": "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) > 0)",
-    "category" : "mini_wins",
+    "category" : "maxi_wins",
     "min" : 1,
     "max" : 999
 },
 {
-    "label": "2+ Mini Wins",
+    "label": "2+ Maxi Wins",
     "description": "Queen has at least two mini challenge wins.",
     "sql": "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) >= 2)",
-    "category" : "mini_wins",
+    "category" : "maxi_wins",
     "min" : 2,
     "max" : 999
 },
 {
-    "label": "3+ Mini Wins",
+    "label": "3+ Maxi Wins",
     "description": "Queen has at least three mini challenge wins.",
     "sql": "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) >= 3)",
-    "category" : "mini_wins",
+    "category" : "maxi_wins",
     "min" : 3,
     "max" : 999
 },
 {
-    "label": "4+ Mini Wins",
+    "label": "4+ Maxi Wins",
     "description": "Queen has at least four mini challenge wins.",
     "sql": "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) >= 4)",
-    "category" : "mini_wins",
+    "category" : "maxi_wins",
     "min" : 4,
     "max" : 999
 },
