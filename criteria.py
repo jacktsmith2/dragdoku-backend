@@ -1,4 +1,4 @@
-    CRITERIA = [
+CRITERIA = [
 {
     "label": "Season 1",
     "description": "Queen appeared in Season 1 (any franchise).",
