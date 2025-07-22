@@ -1,49 +1,49 @@
 {
   "rows": [
-    "3+ Lip Sync Wins",
-    "4+ Lip Sync Wins",
-    "Returning Queen"
+    "Season 12",
+    "Season 1",
+    "Season 17"
   ],
   "cols": [
-    "Season 11",
-    "Season 10",
-    "Season 6"
+    "No Lip Sync Wins",
+    "No Maxi Wins",
+    "2+ Maxi Wins"
   ],
   "row_sql": [
-    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) >= 3)",
-    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) >= 4)",
-    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(is_returning) >= 1)"
+    "id IN (SELECT id FROM queens WHERE season_no = 12)",
+    "id IN (SELECT id FROM queens WHERE season_no = 1)",
+    "id IN (SELECT id FROM queens WHERE season_no = 17)"
   ],
   "col_sql": [
-    "id IN (SELECT id FROM queens WHERE season_no = 11)",
-    "id IN (SELECT id FROM queens WHERE season_no = 10)",
-    "id IN (SELECT id FROM queens WHERE season_no = 6)"
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) = 0)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) = 0)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) >= 2)"
   ],
   "row_desc": [
-    "Queen has at least three lip sync wins.",
-    "Queen has at least four lip sync wins.",
-    "Queen returned to the competition during any season."
+    "Queen appeared in Season 12 (any franchise).",
+    "Queen appeared in Season 1 (any franchise).",
+    "Queen appeared in Season 17 (any franchise)."
   ],
   "col_desc": [
-    "Queen appeared in Season 11 (any franchise).",
-    "Queen appeared in Season 10 (any franchise).",
-    "Queen appeared in Season 6 (any franchise)."
+    "Queen has zero lip sync wins.",
+    "Queen has zero mini challenge wins.",
+    "Queen has at least two mini challenge wins."
   ],
   "answers": [
     [
-      "156",
-      "88",
-      "65"
+      "141",
+      "145",
+      "153"
     ],
     [
-      "157",
-      "105",
-      "617"
+      "327",
+      "562",
+      "287"
     ],
     [
-      "154",
-      "131",
-      "163"
+      "217",
+      "214",
+      "222"
     ]
   ]
 }
