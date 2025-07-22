@@ -1,49 +1,49 @@
 {
   "rows": [
-    "2+ Lip Sync Wins",
-    "2 Lip Sync Wins",
-    "1 Lip Sync Win"
+    "Season 2",
+    "Season 17",
+    "Season 16"
   ],
   "cols": [
-    "Season 11",
-    "3+ Maxi Wins",
-    "1+ Maxi Win"
+    "No Maxi Wins",
+    "4+ Lip Sync Wins",
+    "2 Lip Sync Wins"
   ],
   "row_sql": [
-    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) >= 2)",
-    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) = 2)",
-    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) = 1)"
+    "id IN (SELECT id FROM queens WHERE season_no = 2)",
+    "id IN (SELECT id FROM queens WHERE season_no = 17)",
+    "id IN (SELECT id FROM queens WHERE season_no = 16)"
   ],
   "col_sql": [
-    "id IN (SELECT id FROM queens WHERE season_no = 11)",
-    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) >= 3)",
-    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) > 0)"
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) = 0)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) >= 4)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) = 2)"
   ],
   "row_desc": [
-    "Queen has at least two lip sync wins.",
-    "Queen has two lip sync wins.",
-    "Queen has one lip sync win."
+    "Queen appeared in Season 2 (any franchise).",
+    "Queen appeared in Season 17 (any franchise).",
+    "Queen appeared in Season 16 (any franchise)."
   ],
   "col_desc": [
-    "Queen appeared in Season 11 (any franchise).",
-    "Queen has at least three mini challenge wins.",
-    "Queen has at least one mini challenge win."
+    "Queen has zero mini challenge wins.",
+    "Queen has at least four lip sync wins.",
+    "Queen has two lip sync wins."
   ],
   "answers": [
     [
-      "158",
-      "146",
-      "509"
+      "10",
+      "321",
+      "15"
     ],
     [
-      "135",
-      "221",
-      "45"
+      "214",
+      "652",
+      "224"
     ],
     [
-      "130",
-      "177",
-      "94"
+      "205",
+      "539",
+      "200"
     ]
   ]
 }
