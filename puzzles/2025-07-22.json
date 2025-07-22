@@ -1,49 +1,49 @@
 {
   "rows": [
-    "Season 2",
-    "Season 17",
-    "Season 16"
+    "1+ Lip Sync Win",
+    "2 Lip Sync Wins",
+    "Returning Queen"
   ],
   "cols": [
-    "No Maxi Wins",
-    "4+ Lip Sync Wins",
-    "2 Lip Sync Wins"
+    "1+ Maxi Win",
+    "Season 10",
+    "Season 1"
   ],
   "row_sql": [
-    "id IN (SELECT id FROM queens WHERE season_no = 2)",
-    "id IN (SELECT id FROM queens WHERE season_no = 17)",
-    "id IN (SELECT id FROM queens WHERE season_no = 16)"
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) >= 1)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) = 2)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(is_returning) >= 1)"
   ],
   "col_sql": [
-    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) = 0)",
-    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) >= 4)",
-    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) = 2)"
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) > 0)",
+    "id IN (SELECT id FROM queens WHERE season_no = 10)",
+    "id IN (SELECT id FROM queens WHERE season_no = 1)"
   ],
   "row_desc": [
-    "Queen appeared in Season 2 (any franchise).",
-    "Queen appeared in Season 17 (any franchise).",
-    "Queen appeared in Season 16 (any franchise)."
+    "Queen has at least one lip sync win.",
+    "Queen has two lip sync wins.",
+    "Queen returned to the competition during any season."
   ],
   "col_desc": [
-    "Queen has zero mini challenge wins.",
-    "Queen has at least four lip sync wins.",
-    "Queen has two lip sync wins."
+    "Queen has at least one mini challenge win.",
+    "Queen appeared in Season 10 (any franchise).",
+    "Queen appeared in Season 1 (any franchise)."
   ],
   "answers": [
     [
-      "10",
-      "321",
-      "15"
+      "509",
+      "125",
+      "360"
     ],
     [
-      "214",
-      "652",
-      "224"
+      "45",
+      "114",
+      "9"
     ],
     [
-      "205",
-      "539",
-      "200"
+      "232",
+      "130",
+      "268"
     ]
   ]
 }
