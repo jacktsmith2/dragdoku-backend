@@ -1,0 +1,49 @@
+{
+  "rows": [
+    "1+ Lip Sync Win",
+    "Returning Queen",
+    "No Lip Sync Wins"
+  ],
+  "cols": [
+    "Season 9",
+    "Season 16",
+    "Season 3"
+  ],
+  "row_sql": [
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) >= 1)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(is_returning) >= 1)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) = 0)"
+  ],
+  "col_sql": [
+    "id IN (SELECT id FROM queens WHERE season_no = 9)",
+    "id IN (SELECT id FROM queens WHERE season_no = 16)",
+    "id IN (SELECT id FROM queens WHERE season_no = 3)"
+  ],
+  "row_desc": [
+    "Queen has at least one lip sync win.",
+    "Queen returned to the competition during any season.",
+    "Queen has zero lip sync wins."
+  ],
+  "col_desc": [
+    "Queen appeared in Season 9 (any franchise).",
+    "Queen appeared in Season 16 (any franchise).",
+    "Queen appeared in Season 3 (any franchise)."
+  ],
+  "answers": [
+    [
+      "161",
+      "198",
+      "434"
+    ],
+    [
+      "125",
+      "546",
+      "428"
+    ],
+    [
+      "107",
+      "203",
+      "22"
+    ]
+  ]
+}
