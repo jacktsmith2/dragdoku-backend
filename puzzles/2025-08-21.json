@@ -1,0 +1,49 @@
+{
+  "rows": [
+    "Season 8",
+    "Season 2",
+    "Season 17"
+  ],
+  "cols": [
+    "4+ Lip Sync Wins",
+    "2 Lip Sync Wins",
+    "1+ Lip Sync Win"
+  ],
+  "row_sql": [
+    "id IN (SELECT id FROM queens WHERE season_no = 8)",
+    "id IN (SELECT id FROM queens WHERE season_no = 2)",
+    "id IN (SELECT id FROM queens WHERE season_no = 17)"
+  ],
+  "col_sql": [
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) >= 4)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) = 2)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) >= 1)"
+  ],
+  "row_desc": [
+    "Queen appeared in Season 8 (any franchise).",
+    "Queen appeared in Season 2 (any franchise).",
+    "Queen appeared in Season 17 (any franchise)."
+  ],
+  "col_desc": [
+    "Queen has at least four lip sync wins.",
+    "Queen has two lip sync wins.",
+    "Queen has at least one lip sync win."
+  ],
+  "answers": [
+    [
+      "197",
+      "98",
+      "311"
+    ],
+    [
+      "469",
+      "15",
+      "12"
+    ],
+    [
+      "653",
+      "223",
+      "645"
+    ]
+  ]
+}
