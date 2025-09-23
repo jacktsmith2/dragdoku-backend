@@ -1,0 +1,49 @@
+{
+  "rows": [
+    "2+ Lip Sync Wins",
+    "4+ Lip Sync Wins",
+    "1+ Lip Sync Win"
+  ],
+  "cols": [
+    "Season 9",
+    "Returning Queen",
+    "Season 10"
+  ],
+  "row_sql": [
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) >= 2)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) >= 4)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) >= 1)"
+  ],
+  "col_sql": [
+    "id IN (SELECT id FROM queens WHERE season_no = 9)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(is_returning) >= 1)",
+    "id IN (SELECT id FROM queens WHERE season_no = 10)"
+  ],
+  "row_desc": [
+    "Queen has at least two lip sync wins.",
+    "Queen has at least four lip sync wins.",
+    "Queen has at least one lip sync win."
+  ],
+  "col_desc": [
+    "Queen appeared in Season 9 (any franchise).",
+    "Queen returned to the competition during any season.",
+    "Queen appeared in Season 10 (any franchise)."
+  ],
+  "answers": [
+    [
+      "221",
+      "58",
+      "132"
+    ],
+    [
+      "92",
+      "202",
+      "390"
+    ],
+    [
+      "109",
+      "396",
+      "88"
+    ]
+  ]
+}
