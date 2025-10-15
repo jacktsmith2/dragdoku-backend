@@ -1,0 +1,49 @@
+{
+  "rows": [
+    "Returning Queen",
+    "1 Lip Sync Win",
+    "2+ Lip Sync Wins"
+  ],
+  "cols": [
+    "Season 10",
+    "Season 7",
+    "3+ Maxi Wins"
+  ],
+  "row_sql": [
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(is_returning) >= 1)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) = 1)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) >= 2)"
+  ],
+  "col_sql": [
+    "id IN (SELECT id FROM queens WHERE season_no = 10)",
+    "id IN (SELECT id FROM queens WHERE season_no = 7)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) >= 3)"
+  ],
+  "row_desc": [
+    "Queen returned to the competition during any season.",
+    "Queen has one lip sync win.",
+    "Queen has at least two lip sync wins."
+  ],
+  "col_desc": [
+    "Queen appeared in Season 10 (any franchise).",
+    "Queen appeared in Season 7 (any franchise).",
+    "Queen has at least three mini challenge wins."
+  ],
+  "answers": [
+    [
+      "136",
+      "79",
+      "146"
+    ],
+    [
+      "118",
+      "84",
+      "210"
+    ],
+    [
+      "131",
+      "34",
+      "196"
+    ]
+  ]
+}
