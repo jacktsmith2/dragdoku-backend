@@ -1,0 +1,49 @@
+{
+  "rows": [
+    "Returning Queen",
+    "Season 16",
+    "Season 15"
+  ],
+  "cols": [
+    "2 Maxi Wins",
+    "3+ Maxi Wins",
+    "1 Maxi Win"
+  ],
+  "row_sql": [
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(is_returning) >= 1)",
+    "id IN (SELECT id FROM queens WHERE season_no = 16)",
+    "id IN (SELECT id FROM queens WHERE season_no = 15)"
+  ],
+  "col_sql": [
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) = 2)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) >= 3)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) = 1)"
+  ],
+  "row_desc": [
+    "Queen returned to the competition during any season.",
+    "Queen appeared in Season 16 (any franchise).",
+    "Queen appeared in Season 15 (any franchise)."
+  ],
+  "col_desc": [
+    "Queen has two mini challenge wins.",
+    "Queen has at least three mini challenge wins.",
+    "Queen has one mini challenge win."
+  ],
+  "answers": [
+    [
+      "66",
+      "140",
+      "606"
+    ],
+    [
+      "551",
+      "208",
+      "200"
+    ],
+    [
+      "192",
+      "196",
+      "186"
+    ]
+  ]
+}
