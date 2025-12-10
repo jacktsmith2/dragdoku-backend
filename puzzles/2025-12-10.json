@@ -1,0 +1,49 @@
+{
+  "rows": [
+    "Season 2",
+    "Season 7",
+    "Season 6"
+  ],
+  "cols": [
+    "3+ Maxi Wins",
+    "4+ Lip Sync Wins",
+    "2 Maxi Wins"
+  ],
+  "row_sql": [
+    "id IN (SELECT id FROM queens WHERE season_no = 2)",
+    "id IN (SELECT id FROM queens WHERE season_no = 7)",
+    "id IN (SELECT id FROM queens WHERE season_no = 6)"
+  ],
+  "col_sql": [
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) >= 3)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) >= 4)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) = 2)"
+  ],
+  "row_desc": [
+    "Queen appeared in Season 2 (any franchise).",
+    "Queen appeared in Season 7 (any franchise).",
+    "Queen appeared in Season 6 (any franchise)."
+  ],
+  "col_desc": [
+    "Queen has at least three mini challenge wins.",
+    "Queen has at least four lip sync wins.",
+    "Queen has two mini challenge wins."
+  ],
+  "answers": [
+    [
+      "138",
+      "149",
+      "59"
+    ],
+    [
+      "87",
+      "112",
+      "175"
+    ],
+    [
+      "73",
+      "71",
+      "67"
+    ]
+  ]
+}
