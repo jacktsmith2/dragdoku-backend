@@ -1,0 +1,49 @@
+{
+  "rows": [
+    "Season 2",
+    "Season 9",
+    "Season 3"
+  ],
+  "cols": [
+    "No Lip Sync Wins",
+    "1 Lip Sync Win",
+    "2 Lip Sync Wins"
+  ],
+  "row_sql": [
+    "id IN (SELECT id FROM queens WHERE season_no = 2)",
+    "id IN (SELECT id FROM queens WHERE season_no = 9)",
+    "id IN (SELECT id FROM queens WHERE season_no = 3)"
+  ],
+  "col_sql": [
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) = 0)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) = 1)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) = 2)"
+  ],
+  "row_desc": [
+    "Queen appeared in Season 2 (any franchise).",
+    "Queen appeared in Season 9 (any franchise).",
+    "Queen appeared in Season 3 (any franchise)."
+  ],
+  "col_desc": [
+    "Queen has zero lip sync wins.",
+    "Queen has one lip sync win.",
+    "Queen has two lip sync wins."
+  ],
+  "answers": [
+    [
+      "13",
+      "18",
+      "20"
+    ],
+    [
+      "107",
+      "105",
+      "110"
+    ],
+    [
+      "23",
+      "30",
+      "33"
+    ]
+  ]
+}
