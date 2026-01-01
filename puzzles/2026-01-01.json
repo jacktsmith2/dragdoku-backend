@@ -1,0 +1,49 @@
+{
+  "rows": [
+    "Season 16",
+    "Season 6",
+    "Season 10"
+  ],
+  "cols": [
+    "No Lip Sync Wins",
+    "1+ Lip Sync Win",
+    "1 Lip Sync Win"
+  ],
+  "row_sql": [
+    "id IN (SELECT id FROM queens WHERE season_no = 16)",
+    "id IN (SELECT id FROM queens WHERE season_no = 6)",
+    "id IN (SELECT id FROM queens WHERE season_no = 10)"
+  ],
+  "col_sql": [
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) = 0)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) >= 1)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) = 1)"
+  ],
+  "row_desc": [
+    "Queen appeared in Season 16 (any franchise).",
+    "Queen appeared in Season 6 (any franchise).",
+    "Queen appeared in Season 10 (any franchise)."
+  ],
+  "col_desc": [
+    "Queen has zero lip sync wins.",
+    "Queen has at least one lip sync win.",
+    "Queen has one lip sync win."
+  ],
+  "answers": [
+    [
+      "205",
+      "201",
+      "198"
+    ],
+    [
+      "70",
+      "158",
+      "67"
+    ],
+    [
+      "104",
+      "118",
+      "115"
+    ]
+  ]
+}
