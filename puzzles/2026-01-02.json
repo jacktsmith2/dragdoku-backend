@@ -1,0 +1,49 @@
+{
+  "rows": [
+    "Season 14",
+    "Season 13",
+    "Season 7"
+  ],
+  "cols": [
+    "Returning Queen",
+    "1 Maxi Win",
+    "2 Maxi Wins"
+  ],
+  "row_sql": [
+    "id IN (SELECT id FROM queens WHERE season_no = 14)",
+    "id IN (SELECT id FROM queens WHERE season_no = 13)",
+    "id IN (SELECT id FROM queens WHERE season_no = 7)"
+  ],
+  "col_sql": [
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(is_returning) >= 1)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) = 1)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) = 2)"
+  ],
+  "row_desc": [
+    "Queen appeared in Season 14 (any franchise).",
+    "Queen appeared in Season 13 (any franchise).",
+    "Queen appeared in Season 7 (any franchise)."
+  ],
+  "col_desc": [
+    "Queen returned to the competition during any season.",
+    "Queen has one mini challenge win.",
+    "Queen has two mini challenge wins."
+  ],
+  "answers": [
+    [
+      "305",
+      "175",
+      "300"
+    ],
+    [
+      "211",
+      "212",
+      "159"
+    ],
+    [
+      "76",
+      "77",
+      "85"
+    ]
+  ]
+}
