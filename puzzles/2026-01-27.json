@@ -1,0 +1,49 @@
+{
+  "rows": [
+    "Season 17",
+    "Season 13",
+    "Season 6"
+  ],
+  "cols": [
+    "No Maxi Wins",
+    "1+ Maxi Win",
+    "2 Maxi Wins"
+  ],
+  "row_sql": [
+    "id IN (SELECT id FROM queens WHERE season_no = 17)",
+    "id IN (SELECT id FROM queens WHERE season_no = 13)",
+    "id IN (SELECT id FROM queens WHERE season_no = 6)"
+  ],
+  "col_sql": [
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) = 0)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) > 0)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) = 2)"
+  ],
+  "row_desc": [
+    "Queen appeared in Season 17 (any franchise).",
+    "Queen appeared in Season 13 (any franchise).",
+    "Queen appeared in Season 6 (any franchise)."
+  ],
+  "col_desc": [
+    "Queen has zero mini challenge wins.",
+    "Queen has at least one mini challenge win.",
+    "Queen has two mini challenge wins."
+  ],
+  "answers": [
+    [
+      "224",
+      "648",
+      "222"
+    ],
+    [
+      "157",
+      "223",
+      "164"
+    ],
+    [
+      "63",
+      "616",
+      "66"
+    ]
+  ]
+}
