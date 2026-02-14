@@ -1,0 +1,49 @@
+{
+  "rows": [
+    "Season 12",
+    "Season 5",
+    "Season 16"
+  ],
+  "cols": [
+    "1 Maxi Win",
+    "No Lip Sync Wins",
+    "2+ Lip Sync Wins"
+  ],
+  "row_sql": [
+    "id IN (SELECT id FROM queens WHERE season_no = 12)",
+    "id IN (SELECT id FROM queens WHERE season_no = 5)",
+    "id IN (SELECT id FROM queens WHERE season_no = 16)"
+  ],
+  "col_sql": [
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) = 1)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) = 0)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) >= 2)"
+  ],
+  "row_desc": [
+    "Queen appeared in Season 12 (any franchise).",
+    "Queen appeared in Season 5 (any franchise).",
+    "Queen appeared in Season 16 (any franchise)."
+  ],
+  "col_desc": [
+    "Queen has one mini challenge win.",
+    "Queen has zero lip sync wins.",
+    "Queen has at least two lip sync wins."
+  ],
+  "answers": [
+    [
+      "148",
+      "141",
+      "182"
+    ],
+    [
+      "507",
+      "52",
+      "53"
+    ],
+    [
+      "201",
+      "205",
+      "551"
+    ]
+  ]
+}
