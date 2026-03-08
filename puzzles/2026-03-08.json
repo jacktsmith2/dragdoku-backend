@@ -1,0 +1,49 @@
+{
+  "rows": [
+    "Season 10",
+    "Season 15",
+    "Season 11"
+  ],
+  "cols": [
+    "2+ Maxi Wins",
+    "2 Maxi Wins",
+    "1 Maxi Win"
+  ],
+  "row_sql": [
+    "id IN (SELECT id FROM queens WHERE season_no = 10)",
+    "id IN (SELECT id FROM queens WHERE season_no = 15)",
+    "id IN (SELECT id FROM queens WHERE season_no = 11)"
+  ],
+  "col_sql": [
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) >= 2)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) = 2)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) = 1)"
+  ],
+  "row_desc": [
+    "Queen appeared in Season 10 (any franchise).",
+    "Queen appeared in Season 15 (any franchise).",
+    "Queen appeared in Season 11 (any franchise)."
+  ],
+  "col_desc": [
+    "Queen has at least two mini challenge wins.",
+    "Queen has two mini challenge wins.",
+    "Queen has one mini challenge win."
+  ],
+  "answers": [
+    [
+      "104",
+      "124",
+      "118"
+    ],
+    [
+      "194",
+      "192",
+      "186"
+    ],
+    [
+      "137",
+      "134",
+      "140"
+    ]
+  ]
+}
