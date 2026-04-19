@@ -1,0 +1,49 @@
+{
+  "rows": [
+    "2+ Maxi Wins",
+    "No Maxi Wins",
+    "Returning Queen"
+  ],
+  "cols": [
+    "Season 8",
+    "Season 1",
+    "Season 10"
+  ],
+  "row_sql": [
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) >= 2)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) = 0)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(is_returning) >= 1)"
+  ],
+  "col_sql": [
+    "id IN (SELECT id FROM queens WHERE season_no = 8)",
+    "id IN (SELECT id FROM queens WHERE season_no = 1)",
+    "id IN (SELECT id FROM queens WHERE season_no = 10)"
+  ],
+  "row_desc": [
+    "Queen has at least two mini challenge wins.",
+    "Queen has zero mini challenge wins.",
+    "Queen returned to the competition during any season."
+  ],
+  "col_desc": [
+    "Queen appeared in Season 8 (any franchise).",
+    "Queen appeared in Season 1 (any franchise).",
+    "Queen appeared in Season 10 (any franchise)."
+  ],
+  "answers": [
+    [
+      "99",
+      "331",
+      "104"
+    ],
+    [
+      "95",
+      "4",
+      "647"
+    ],
+    [
+      "16",
+      "358",
+      "127"
+    ]
+  ]
+}
