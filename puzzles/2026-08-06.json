@@ -1,0 +1,49 @@
+{
+  "rows": [
+    "3+ Lip Sync Wins",
+    "1 Lip Sync Win",
+    "2+ Lip Sync Wins"
+  ],
+  "cols": [
+    "1 Maxi Win",
+    "No Maxi Wins",
+    "3 Maxi Wins"
+  ],
+  "row_sql": [
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) >= 3)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) = 1)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) >= 2)"
+  ],
+  "col_sql": [
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) = 1)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) = 0)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) = 3)"
+  ],
+  "row_desc": [
+    "Queen has at least three lip sync wins.",
+    "Queen has one lip sync win.",
+    "Queen has at least two lip sync wins."
+  ],
+  "col_desc": [
+    "Queen has one mini challenge win.",
+    "Queen has zero mini challenge wins.",
+    "Queen has three mini challenge wins."
+  ],
+  "answers": [
+    [
+      "603",
+      "391",
+      "140"
+    ],
+    [
+      "27",
+      "90",
+      "210"
+    ],
+    [
+      "484",
+      "306",
+      "141"
+    ]
+  ]
+}
