@@ -1,0 +1,49 @@
+{
+  "rows": [
+    "Season 9",
+    "Season 5",
+    "Season 1"
+  ],
+  "cols": [
+    "1+ Maxi Win",
+    "2 Maxi Wins",
+    "1 Maxi Win"
+  ],
+  "row_sql": [
+    "id IN (SELECT id FROM queens WHERE season_no = 9)",
+    "id IN (SELECT id FROM queens WHERE season_no = 5)",
+    "id IN (SELECT id FROM queens WHERE season_no = 1)"
+  ],
+  "col_sql": [
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) > 0)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) = 2)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) = 1)"
+  ],
+  "row_desc": [
+    "Queen appeared in Season 9 (any franchise).",
+    "Queen appeared in Season 5 (any franchise).",
+    "Queen appeared in Season 1 (any franchise)."
+  ],
+  "col_desc": [
+    "Queen has at least one mini challenge win.",
+    "Queen has two mini challenge wins.",
+    "Queen has one mini challenge win."
+  ],
+  "answers": [
+    [
+      "109",
+      "125",
+      "108"
+    ],
+    [
+      "19",
+      "59",
+      "659"
+    ],
+    [
+      "319",
+      "331",
+      "357"
+    ]
+  ]
+}
