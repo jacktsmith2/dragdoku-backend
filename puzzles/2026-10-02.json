@@ -1,0 +1,49 @@
+{
+  "rows": [
+    "2+ Lip Sync Wins",
+    "3+ Lip Sync Wins",
+    "2+ Maxi Wins"
+  ],
+  "cols": [
+    "Season 10",
+    "Season 2",
+    "Season 12"
+  ],
+  "row_sql": [
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) >= 2)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(lip_sync_wins) >= 3)",
+    "id IN (SELECT id FROM queens GROUP BY id HAVING SUM(win) >= 2)"
+  ],
+  "col_sql": [
+    "id IN (SELECT id FROM queens WHERE season_no = 10)",
+    "id IN (SELECT id FROM queens WHERE season_no = 2)",
+    "id IN (SELECT id FROM queens WHERE season_no = 12)"
+  ],
+  "row_desc": [
+    "Queen has at least two lip sync wins.",
+    "Queen has at least three lip sync wins.",
+    "Queen has at least two mini challenge wins."
+  ],
+  "col_desc": [
+    "Queen appeared in Season 10 (any franchise).",
+    "Queen appeared in Season 2 (any franchise).",
+    "Queen appeared in Season 12 (any franchise)."
+  ],
+  "answers": [
+    [
+      "307",
+      "232",
+      "186"
+    ],
+    [
+      "390",
+      "249",
+      "152"
+    ],
+    [
+      "126",
+      "138",
+      "181"
+    ]
+  ]
+}
